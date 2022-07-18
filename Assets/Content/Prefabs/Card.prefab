@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1590660279245696769
 RectTransform:
   m_ObjectHideFlags: 0
@@ -91,7 +91,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8065232783597327957
 RectTransform:
   m_ObjectHideFlags: 0
@@ -214,6 +214,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7211158270377124990}
+  - component: {fileID: 6722680170348605342}
   m_Layer: 5
   m_Name: Card
   m_TagString: Untagged
@@ -243,6 +244,22 @@ RectTransform:
   m_AnchoredPosition: {x: -627, y: 184}
   m_SizeDelta: {x: 264, y: 368}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &6722680170348605342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7211158270377124991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb44b4ad90344ca9918466154c2e0b7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _loadImage: {fileID: 7211158271596482627}
+  _faceSide: {fileID: 256767452517753250}
+  _backSide: {fileID: 31005006516927456}
+  _transform: {fileID: 7211158270377124990}
 --- !u!1 &7211158270845777116
 GameObject:
   m_ObjectHideFlags: 0

@@ -20,12 +20,14 @@ namespace Content.Scripts.Commands
         {
             _cards = cards;
             _cts = new CancellationTokenSource();
-            _cardFlipper = new CardFlipper(new Vector3(0, 90, 0), 100, 1, Ease.InBack);
+            _cardFlipper = new CardFlipper(new Vector3(0, 90, 0), 100, 0.5f, Ease.InBack);
             _imageDownloader = imageDownloader;
         }
 
         public async UniTask ExecuteAsync()
         {
+            await _cardFlipper.FlipCardListAsync(_cards, CardSide.Back);
+            
             try
             {
                 var download = _cards.Select(DownloadSelector);
@@ -34,7 +36,12 @@ namespace Content.Scripts.Commands
             }
             catch (OperationCanceledException e)
             {
-                Debug.LogError("Cancel load!");
+                if (_cts.Token == e.CancellationToken)
+                {
+                    Debug.LogError("Cancel load!");
+                    _cardFlipper.FlipCardListAsync(_cards, CardSide.Back).Forget();
+                }
+                else Debug.LogError(e);
             }
             finally
             {

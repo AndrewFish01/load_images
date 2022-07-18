@@ -12,7 +12,6 @@ namespace Content.Scripts
         private Vector3 _endRotateValue;
         private float _endMoveValue;
         private Ease _easeMode;
-        
         public CardFlipper(Vector3 endRotateValue, float endMoveValue, float durationAnim, Ease easeMode)
         {
             _endRotateValue = endRotateValue;
@@ -23,6 +22,7 @@ namespace Content.Scripts
 
         public async UniTask FlipCardAsync(Card card, CardSide cardSide)
         {
+            if (card.CurrentSide == cardSide) return;
             await PlayFlippingAnim(card.transform, _endRotateValue, _endMoveValue);
             card.SetSide(cardSide);
             await PlayFlippingAnim(card.transform, Vector3.zero, 0);

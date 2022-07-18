@@ -10,7 +10,6 @@ namespace Content.Scripts
         [SerializeField] private RawImage _loadImage;
         [SerializeField] private GameObject _faceSide;
         [SerializeField] private GameObject _backSide;
-        [SerializeField] private Transform _transform;
 
         private CardSide _currentSide = CardSide.Back;
 

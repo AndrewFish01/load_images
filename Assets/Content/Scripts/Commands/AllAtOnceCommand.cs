@@ -20,7 +20,7 @@ namespace Content.Scripts.Commands
         {
             _cards = cards;
             _cts = new CancellationTokenSource();
-            _cardFlipper = new CardFlipper(new Vector3(0, 90, 0), 100, 0.5f, Ease.InBack);
+            _cardFlipper = new CardFlipper(new Vector3(0, 90, 0), 100, 0.3f, Ease.InBack);
             _imageDownloader = imageDownloader;
         }
 

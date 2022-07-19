@@ -15,6 +15,11 @@ namespace Content.Scripts
 
         public CardSide CurrentSide => _currentSide;
 
+        private void OnDestroy()
+        {
+            _loadImage.texture.Release();
+        }
+
         public void SetImage(Texture2D texture2D)
         {
             _loadImage.texture.Release();

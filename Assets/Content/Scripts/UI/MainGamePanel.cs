@@ -16,7 +16,7 @@ namespace Content.Scripts.UI
         [SerializeField] private List<Card> _cards;
         
         public List<Card> GetCards() => _cards;
-        
+        public Button ButtonCancel => _buttonCancel;
         public event UnityAction<DownloadType> ClickMode;
         public event UnityAction ClickCancel;
 
@@ -35,7 +35,12 @@ namespace Content.Scripts.UI
             _buttonWhenReady.onClick.RemoveListener(OnClickWhenReady);
             _buttonCancel.onClick.RemoveListener(OnClickCancel);
         }
-        
+
+        private void OnDestroy()
+        {
+            _cards.Clear();
+        }
+
         private void OnClickAllAtOnce() => ClickMode?.Invoke(DownloadType.AllAtOnce);
         private void OnClickOneByOne() => ClickMode?.Invoke(DownloadType.OneByOne);
         private void OnClickWhenReady() => ClickMode?.Invoke(DownloadType.WhenReady);

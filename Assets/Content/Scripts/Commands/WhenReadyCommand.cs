@@ -24,6 +24,12 @@ namespace Content.Scripts.Commands
             _cts = new CancellationTokenSource();
         }
 
+        ~WhenReadyCommand()
+        {
+            _cards.Clear();
+            Debug.Log("destructor invoke WhenReadyCommand");
+        }
+
         public async UniTask ExecuteAsync()
         {
             await _cardFlipper.FlipCardListAsync(_cards, CardSide.Back);

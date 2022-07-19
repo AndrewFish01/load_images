@@ -23,6 +23,12 @@ namespace Content.Scripts.Commands
             _cardFlipper = new CardFlipper(new Vector3(0, 90, 0), 100, 0.3f, Ease.InBack);
             _imageDownloader = imageDownloader;
         }
+        
+        ~AllAtOnceCommand()
+        {
+            _cards.Clear();
+            Debug.Log("destructor invoke AllAtOnceCommand");
+        }
 
         public async UniTask ExecuteAsync()
         {

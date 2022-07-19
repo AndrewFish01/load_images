@@ -14,14 +14,22 @@ namespace Content.Scripts
         private ImageDownloader _imageDownloader;
         private ICommand _currentCommand;
         private List<Card> _cards;
+        private bool _isRun;
 
         public GameController(MainGamePanel mainPanel)
         {
             _mainPanel = mainPanel;
             _cards = mainPanel.GetCards();
             _imageDownloader = new ImageDownloader();
+            _isRun = false;
             SubscribeOnEvents();
             InitGame();
+        }
+
+        ~GameController()
+        {
+            _cards.Clear();
+            UnsubscribeOnEvents();
         }
 
         private void InitGame()
@@ -35,8 +43,16 @@ namespace Content.Scripts
             _mainPanel.ClickMode += OnClickMode;
         }
 
+        private void UnsubscribeOnEvents()
+        {
+            _mainPanel.ClickCancel -= OnClickCancel;
+            _mainPanel.ClickMode -= OnClickMode;
+        }
+        
         private void OnClickMode(DownloadType type)
         {
+            if(_isRun) return;
+            _isRun = true;
             _currentCommand = type switch
             {
                 DownloadType.AllAtOnce => new AllAtOnceCommand(_cards, _imageDownloader),
@@ -44,21 +60,23 @@ namespace Content.Scripts
                 DownloadType.WhenReady => new WhenReadyCommand(_cards, _imageDownloader),
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Not find download type")
             };
-
+            
             ExecuteCommand(_currentCommand).Forget();
         }
 
         private async UniTaskVoid ExecuteCommand(ICommand command)
         {
-            _mainPanel.ActivatorModeButtons(false);
+            _mainPanel.ButtonCancel.interactable = true;
             await command.ExecuteAsync();
-            _mainPanel.ActivatorModeButtons(true);
+            _isRun = false;
+            _mainPanel.ButtonCancel.interactable = false;
         }
 
         private void OnClickCancel()
         {
             _currentCommand?.Undo();
-            _mainPanel.ActivatorModeButtons(true);
+            _isRun = false;
+            _mainPanel.ButtonCancel.interactable = false;
         }
     }
 }

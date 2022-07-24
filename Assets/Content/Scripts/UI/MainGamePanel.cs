@@ -16,6 +16,9 @@ namespace Content.Scripts.UI
         [SerializeField] private List<Card> _cards;
         
         public List<Card> GetCards() => _cards;
+        public Button ButtonAllAtOnce => _buttonAllAtOnce;
+        public Button ButtonOneByOne => _buttonOneByOne;
+        public Button ButtonWhenReady => _buttonWhenReady;
         public Button ButtonCancel => _buttonCancel;
         public event UnityAction<DownloadType> ClickMode;
         public event UnityAction ClickCancel;

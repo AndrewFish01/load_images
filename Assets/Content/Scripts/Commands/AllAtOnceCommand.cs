@@ -26,7 +26,6 @@ namespace Content.Scripts.Commands
         
         ~AllAtOnceCommand()
         {
-            _cards.Clear();
             Debug.Log("destructor invoke AllAtOnceCommand");
         }
 

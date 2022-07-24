@@ -5,6 +5,8 @@ using Content.Scripts.Enums;
 using Content.Scripts.Network;
 using Content.Scripts.UI;
 using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks.Linq;
+using UnityEngine;
 
 namespace Content.Scripts
 {
@@ -14,14 +16,14 @@ namespace Content.Scripts
         private ImageDownloader _imageDownloader;
         private ICommand _currentCommand;
         private List<Card> _cards;
-        private bool _isRun;
+        private bool _isCompleted;
 
         public GameController(MainGamePanel mainPanel)
         {
             _mainPanel = mainPanel;
             _cards = mainPanel.GetCards();
             _imageDownloader = new ImageDownloader();
-            _isRun = false;
+            _isCompleted = true;
             SubscribeOnEvents();
             InitGame();
         }
@@ -40,19 +42,38 @@ namespace Content.Scripts
         private void SubscribeOnEvents()
         {
             _mainPanel.ClickCancel += OnClickCancel;
-            _mainPanel.ClickMode += OnClickMode;
+            
+            _mainPanel.ButtonAllAtOnce.OnClickAsAsyncEnumerable().ForEachAwaitAsync(
+                async x =>
+                {
+                    Debug.Log("Click AllAtOnce");
+                    await ExecuteCommandAsync(DownloadType.AllAtOnce);
+                });
+            
+            _mainPanel.ButtonOneByOne.OnClickAsAsyncEnumerable().ForEachAwaitAsync(
+                async x =>
+                {
+                    Debug.Log("Click OneByOne");
+                    await ExecuteCommandAsync(DownloadType.OneByOne);
+                });
+            
+            _mainPanel.ButtonWhenReady.OnClickAsAsyncEnumerable().ForEachAwaitAsync(
+                async x =>
+                {
+                    Debug.Log("Click WhenReady");
+                    await ExecuteCommandAsync(DownloadType.WhenReady);
+                });
         }
 
         private void UnsubscribeOnEvents()
         {
             _mainPanel.ClickCancel -= OnClickCancel;
-            _mainPanel.ClickMode -= OnClickMode;
+            //_mainPanel.ClickMode -= OnClickMode;
         }
         
-        private void OnClickMode(DownloadType type)
+        private async UniTask ExecuteCommandAsync(DownloadType type)
         {
-            if(_isRun) return;
-            _isRun = true;
+            if(!_isCompleted) return;
             _currentCommand = type switch
             {
                 DownloadType.AllAtOnce => new AllAtOnceCommand(_cards, _imageDownloader),
@@ -60,22 +81,21 @@ namespace Content.Scripts
                 DownloadType.WhenReady => new WhenReadyCommand(_cards, _imageDownloader),
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Not find download type")
             };
-            
-            ExecuteCommand(_currentCommand).Forget();
-        }
-
-        private async UniTaskVoid ExecuteCommand(ICommand command)
-        {
+            _isCompleted = false;
             _mainPanel.ButtonCancel.interactable = true;
-            await command.ExecuteAsync();
-            _isRun = false;
+            
+            await _currentCommand.ExecuteAsync().ContinueWith(() =>
+            {
+                Debug.Log("_isCompleted");
+                _isCompleted = true;
+            });
+            
             _mainPanel.ButtonCancel.interactable = false;
         }
 
         private void OnClickCancel()
         {
             _currentCommand?.Undo();
-            _isRun = false;
             _mainPanel.ButtonCancel.interactable = false;
         }
     }

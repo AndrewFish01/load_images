@@ -26,7 +26,6 @@ namespace Content.Scripts.Commands
 
         ~WhenReadyCommand()
         {
-            _cards.Clear();
             Debug.Log("destructor invoke WhenReadyCommand");
         }
 

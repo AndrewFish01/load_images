@@ -26,7 +26,6 @@ namespace Content.Scripts.Commands
         
         ~OneByOneCommand()
         {
-            _cards.Clear();
             Debug.Log("destructor invoke OneByOneCommand");
         }
 

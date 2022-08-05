@@ -14,14 +14,13 @@ namespace Content.Scripts
         private ImageDownloader _imageDownloader;
         private ICommand _currentCommand;
         private List<Card> _cards;
-        private bool _isRun;
+        private UniTask _uniTask;
 
         public GameController(MainGamePanel mainPanel)
         {
             _mainPanel = mainPanel;
             _cards = mainPanel.GetCards();
             _imageDownloader = new ImageDownloader();
-            _isRun = false;
             SubscribeOnEvents();
             InitGame();
         }
@@ -51,8 +50,8 @@ namespace Content.Scripts
         
         private void OnClickMode(DownloadType type)
         {
-            if(_isRun) return;
-            _isRun = true;
+            if (!_uniTask.Status.IsCompleted()) return;
+            
             _currentCommand = type switch
             {
                 DownloadType.AllAtOnce => new AllAtOnceCommand(_cards, _imageDownloader),
@@ -67,15 +66,19 @@ namespace Content.Scripts
         private async UniTaskVoid ExecuteCommand(ICommand command)
         {
             _mainPanel.ButtonCancel.interactable = true;
-            await command.ExecuteAsync();
-            _isRun = false;
+            
+            _uniTask = UniTask.Lazy(async () =>
+            {
+                await command.ExecuteAsync();
+            }).Task;
+            
+            await _uniTask;
             _mainPanel.ButtonCancel.interactable = false;
         }
 
         private void OnClickCancel()
         {
             _currentCommand?.Undo();
-            _isRun = false;
             _mainPanel.ButtonCancel.interactable = false;
         }
     }
